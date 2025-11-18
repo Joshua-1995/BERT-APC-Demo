@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BERT-APC Demo page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 폰트 설정 */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* 밝은 회색 배경 */
+        }
+        /* 섹션 제목 스타일 */
+        .section-title {
+            @apply text-3xl font-bold text-gray-800 mb-8 text-center;
+        }
+        /* 재생 버튼 기본 스타일 */
+        .audio-control-button {
+            @apply text-black w-12 h-12 flex items-center justify-center focus:outline-none;
+        }
+        /* 재생 중일 때 프로그레스 바 색상 변경 */
+        .audio-control-button.playing + .progress-bar-container .progress-bar {
+            @apply bg-orange-500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-700">
+
+    <!-- 페이지 컨테이너 -->
+    <div class="container mx-auto max-w-5xl px-4 py-12">
+
+        <!-- 헤더: 제목, 저자, 링크 -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-4xl font-bold text-gray-900 mb-4">
+            BERT-APC: A Reference-free Framework for Automatic Pitch Correction via Musical Context Inference
+            </h1>
+            <p class="text-lg text-gray-600 mb-4">
+            Anonymous Authors
+            </p>
+        </header>
+
+        <!-- 초록 및 티저 이미지 -->
+        <section class="mb-16">
+            <div class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mb-8">
+            <h2 class="text-3xl md:text-2xl font-bold text-gray-900 mb-2 text-center">Abstract</h2>
+            <p class="text-base leading-relaxed text-gray-700 text-left">
+            <!-- Automatic Pitch Correction (APC) enhances vocal recordings by aligning pitch deviations with the intended musical notes. However, existing APC systems either rely on reference pitches, which limits their practical applicability, or employ simple pitch estimation algorithms that often fail to preserve expressiveness and naturalness. We propose BERT-APC, a novel reference-free APC framework that corrects pitch errors while maintaining the natural expressiveness of vocal performances. First, a novel stationary pitch predictor estimates the perceived pitch corresponding to each note from the detuned input voice. Then, a repurposed music language model predicts the intended note pitch sequence from the detuned stationary pitches. By incorporating musical context, it demonstrates strong robustness to high deviation exceeding a semiton. Finally, a note-level correction algorithm fixes pitch errors while preserving intentional pitch deviations that convey emotional expression. In particular, a learnable data augmentation strategy enhances the robustness of the music language model by simulating realistic detuning patterns. Experimental results show that BERT-APC outperforms baseline singing voice transcription models by large margins in note pitch estimation, and human MOS evaluations confirm its correction accuracy and expression-preserving ability. To the best of our knowledge, this is the first APC model that leverages a music language model to achieve reference-free pitch correction with symbolic musical context. -->
+            Automatic Pitch Correction (APC) enhances vocal recordings by aligning pitch deviations with the intended musical notes. However, existing APC systems either rely on reference pitches, which limits their practical applicability, or employ simple pitch estimation algorithms that often fail to preserve expressiveness and naturalness. We propose BERT-APC, a novel reference-free APC framework that corrects pitch errors while maintaining the natural expressiveness of vocal performances. In BERT-APC, a novel stationary pitch predictor first estimates the perceived pitch of each note from the detuned singing voice. A context-aware note pitch predictor estimates the intended pitch sequence by leveraging a music language model repurposed to incorporate musical context. Finally, a note-level correction algorithm fixes pitch errors while preserving intentional pitch deviations for emotional expression. In addition, we introduce a learnable data augmentation strategy that improves the robustness of the music language model by simulating realistic detuning patterns. Compared to two recent singing voice transcription models, BERT-APC demonstrated superior performance in note pitch prediction, outperforming the second-best model, ROSVOT, by 10.49%p on highly detuned samples in terms of the raw pitch accuracy. In the MOS test, BERT-APC achieved the highest score of 4.30 ± 0.16, which is significantly higher than those of the widely-used commercial APC tools, Auto-Tune (3.20 ± 0.19) and Melodyne (3.07 ± 0.19), while maintaining a comparable ability to preserve expressive nuances. To the best of our knowledge, this is the first APC model that leverages a music language model to achieve reference-free pitch correction with symbolic musical context.
+            </p>
+            </div>
+            <div class="max-w-md mx-auto bg-gray-100 rounded-lg shadow-lg overflow-hidden">
+            <h2 class="text-3xl md:text-2xl font-bold text-gray-900 mb-2 text-center">Model Architecture</h2>
+            <img src="img/Fig_Model_Architecture_v5.png" alt="Model Architecture" class="w-full h-auto" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/4a5568?text=Image+Not+Found';">
+            </div>
+        </section>
+        
+        <!-- 오디오 샘플 -->
+        <section class="mb-16">
+            <h2 class="text-3xl md:text-3xl font-bold text-gray-900 mb-2 text-center">Pitch Correction of Highly Detuned Singing Voices</h2>
+            <!-- 설명 카드 -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-12">
+                <!-- 간단 인트로 -->
+                <p class="text-lg font-medium text-gray-800 mb-4">
+                  Audio examples to demonstrate the performance of three pitch-correction systems on highly detuned singing voices. We recommend listening with earphones for clearer distinction.
+                </p>
+              
+                <div class="mb-6">
+                    <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Figure Legend</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                      <li><span class="font-semibold text-blue-500">Blue:</span> original detuned vocal pitch before correction</li>
+                      <li><span class="font-semibold text-orange-500">Orange:</span> grount-truth (GT) note pitch (piano sound)</li>
+                      <li><span class="font-semibold text-green-500">Green:</span> correction results of each APC system</li>
+                    </ul>
+                  </div>
+                  
+                  <!-- Audio Controls Legend -->
+                  <div class="mb-12">
+                    <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Audio Sample Labels</p>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-8 text-gray-700">
+                      <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <div>
+                            <span class="font-semibold">Before Correction:</span>
+                            <span>Input singing voice containing pitch errors, accompanied by GT note pitches (piano sound)</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <div>
+                            <span class="font-semibold">BERT-APC / AutoTune Pro / Melodyne:</span>
+                            <span>Pitch correction results of each model, accompanied by GT note piotches (piano sound) </span>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              
+                <!-- 최종 비교 설명 -->
+                <p class="text-gray-800 leading-relaxed">
+                  Widely used commercial APC systems, AutoTune Pro and Melodyne, failed to correct sustained pitch deviations exceeding one semitone.
+                  <span class="text-red-500">(highlighted by red circles)</span>. In contrast, 
+                  <span class="font-semibold text-emerald-700">BERT-APC</span> leverages a symbolic music language model trained on large symbolic music data to incorporate musical context, enabling accurate, natural correction even for extreme pitch errors.
+                </p>
+            </div>
+            <div class="space-y-12">
+                
+                <!-- Sample 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Sample 1: </h3>
+                    <div class="flex flex-col items-center space-y-2 mb-8 max-w-xs mx-auto">
+                        <p class="font-semibold text-gray-700">Before Correction</p>
+                        <audio class="audio-player" src="audio/pitch_acc/eval3/org_midi_wav.wav" preload="metadata"></audio>
+                        <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                        <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-8 text-center">
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval3/bertapc_correction_pitch_contour.png" alt="BERT-APC Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-semibold text-emerald-600">BERT-APC (Ours)</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval3/brt_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval3/autotune_correction_pitch_contour.png" alt="AutoTune Pro Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">AutoTune Pro</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval3/auto_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                             <img src="audio/pitch_acc/eval3/melodyne_correction_pitch_contour.png" alt="Melodyne Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">Melodyne</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval3/melo_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample 2, 3, 4 are similar and omitted for brevity, but the button structure is the same -->
+                 <!-- Sample 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Sample 2: </h3>
+                    <div class="flex flex-col items-center space-y-2 mb-8 max-w-xs mx-auto">
+                        <p class="font-semibold text-gray-700">Before Correction</p>
+                        <audio class="audio-player" src="audio/pitch_acc/eval4/org_midi_wav.wav" preload="metadata"></audio>
+                        <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                        <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-8 text-center">
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval4/bertapc_correction_pitch_contour.png" alt="BERT-APC Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-semibold text-emerald-600">BERT-APC (Ours)</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval4/brt_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval4/autotune_correction_pitch_contour.png" alt="AutoTune Pro Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">AutoTune Pro</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval4/auto_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval4/melodyne_correction_pitch_contour.png" alt="Melodyne Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">Melodyne</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval4/melo_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Sample 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Sample 3: </h3>
+                    <div class="flex flex-col items-center space-y-2 mb-8 max-w-xs mx-auto">
+                        <p class="font-semibold text-gray-700">Before Correction</p>
+                        <audio class="audio-player" src="audio/pitch_acc/eval2/org_midi_wav.wav" preload="metadata"></audio>
+                        <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                        <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-8 text-center">
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval2/bertapc_correction_pitch_contour.png" alt="BERT-APC Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-semibold text-emerald-600">BERT-APC (Ours)</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval2/brt_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval2/autotune_correction_pitch_contour.png" alt="AutoTune Pro Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">AutoTune Pro</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval2/auto_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval2/melodyne_correction_pitch_contour.png" alt="Melodyne Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">Melodyne</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval2/melo_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Sample 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Sample 4: </h3>
+                    <div class="flex flex-col items-center space-y-2 mb-8 max-w-xs mx-auto">
+                        <p class="font-semibold text-gray-700">Before Correction</p>
+                        <audio class="audio-player" src="audio/pitch_acc/eval1/org_midi_wav.wav" preload="metadata"></audio>
+                        <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                        <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-8 text-center">
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval1/bertapc_correction_pitch_contour.png" alt="BERT-APC Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-semibold text-emerald-600">BERT-APC (Ours)</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval1/brt_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval1/autotune_correction_pitch_contour.png" alt="AutoTune Pro Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">AutoTune Pro</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval1/auto_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <img src="audio/pitch_acc/eval1/melodyne_correction_pitch_contour.png" alt="Melodyne Pitch Contour" class="w-full h-auto mb-2 rounded-md shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/200x150/e2e8f0/4a5568?text=Image+Not+Found';">
+                            <p class="font-medium text-gray-600">Melodyne</p>
+                            <audio class="audio-player" src="audio/pitch_acc/eval1/melo_midi_wav.wav" preload="metadata"></audio>
+                            <button class="audio-control-button"><svg class="play-icon w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><svg class="pause-icon hidden w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></button>
+                            <div class="progress-bar-container w-full bg-gray-200 rounded-full h-2 mt-2 cursor-pointer"><div class="progress-bar bg-emerald-500 h-2 rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allPlayers = document.querySelectorAll('.audio-player');
+            const allPlayButtons = document.querySelectorAll('.audio-control-button');
+            const allProgressContainers = document.querySelectorAll('.progress-bar-container');
+
+            let currentlyPlayingAudio = null;
+
+            allPlayButtons.forEach(button => {
+                const parent = button.parentElement;
+                const audio = parent.querySelector('.audio-player');
+                const playIcon = button.querySelector('.play-icon');
+                const pauseIcon = button.querySelector('.pause-icon');
+                const progressContainer = parent.querySelector('.progress-bar-container');
+                const progressBar = progressContainer ? progressContainer.querySelector('.progress-bar') : null;
+
+                // 버튼 클릭 이벤트
+                button.addEventListener('click', () => {
+                    // 현재 클릭된 오디오가 아닌 다른 오디오가 재생 중이면 정지
+                    if (currentlyPlayingAudio && currentlyPlayingAudio !== audio) {
+                        const otherButton = currentlyPlayingAudio.parentElement.querySelector('.audio-control-button');
+                        otherButton.classList.remove('playing');
+                        otherButton.querySelector('.play-icon').classList.remove('hidden');
+                        otherButton.querySelector('.pause-icon').classList.add('hidden');
+                        currentlyPlayingAudio.pause();
+                        currentlyPlayingAudio.currentTime = 0;
+                    }
+
+                    const isPlaying = button.classList.contains('playing');
+
+                    if (!isPlaying) {
+                        audio.play();
+                        button.classList.add('playing');
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                        currentlyPlayingAudio = audio;
+                    } else {
+                        audio.pause();
+                        button.classList.remove('playing');
+                        playIcon.classList.remove('hidden');
+                        pauseIcon.classList.add('hidden');
+                        currentlyPlayingAudio = null;
+                    }
+                });
+
+                // 오디오 재생이 끝나면 버튼과 프로그레스 바 상태 변경
+                audio.addEventListener('ended', () => {
+                    button.classList.remove('playing');
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    if (progressBar) {
+                       progressBar.style.width = '0%';
+                    }
+                    currentlyPlayingAudio = null;
+                });
+
+                // 오디오 재생 시간에 따라 프로그레스 바 업데이트
+                audio.addEventListener('timeupdate', () => {
+                    if (audio.duration && progressBar) {
+                        const progressPercent = (audio.currentTime / audio.duration) * 100;
+                        progressBar.style.width = `${progressPercent}%`;
+                    }
+                });
+
+                // 프로그레스 바 클릭 시 오디오 탐색
+                if (progressContainer) {
+                    progressContainer.addEventListener('click', (e) => {
+                        const width = progressContainer.clientWidth;
+                        const clickX = e.offsetX;
+                        const duration = audio.duration;
+                        if (duration) {
+                            audio.currentTime = (clickX / width) * duration;
+                        }
+                    });
+                }
+
+
+                // 오디오 로드 실패 시
+                audio.addEventListener('error', () => {
+                    const container = audio.parentElement;
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = '오디오 로딩 실패';
+                    errorMessage.className = 'text-red-500 text-xs mt-1';
+                    
+                    // 버튼과 프로그레스바 숨기기
+                    if(button) button.style.display = 'none';
+                    if(progressContainer) progressContainer.style.display = 'none';
+
+                    // 에러 메시지 추가 (중복 방지)
+                    if (!container.querySelector('.text-red-500')) {
+                        container.appendChild(errorMessage);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

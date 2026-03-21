@@ -323,10 +323,8 @@
                 </p>
                 <p class="text-gray-800 leading-relaxed">
                     We compare a TD-PSOLA-based implementation using Praat-Parselmouth with a modern pitch-controllable neural vocoder, SiFi-GAN.
-                    Since BERT-APC explicitly produces a frame-level target F0 contour, its pitch adjustment module can be combined with different backends. 
-                    We implemented the pitch adjustment stage with SiFi-GAN in place of Praat-Parselmouth. 
-                    The pitch plots show that Praat-Parselmouth follows the target contour more accurately, while both backends achieve effective pitch control overall. 
-                    These examples illustrate that the proposed pitch adjustment module can also be effectively used with a modern pitch-controllable neural vocoder such as SiFi-GAN.
+                    Since BERT-APC explicitly produces a frame-level target F0 contour, its pitch adjustment module can be combined with different backends.
+                    We implemented the pitch adjustment stage with SiFi-GAN in place of Praat-Parselmouth.
                 </p>
                 
                 <div class="mb-6">
@@ -358,13 +356,17 @@
                     </div>
                 </div>
             </div>
-
             
-
             <div class="mb-16">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-                    Pitch Contour of Corrected Singing Voice.
+                <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+                    Pitch Contour of Corrected Singing Voice
                 </h3>
+                <p class="max-w-3xl mx-auto text-center text-gray-700 leading-relaxed mb-8">
+                    The pitch plots show that Praat-Parselmouth follows the target contour more accurately,
+                    while both backends achieve effective pitch control overall. These examples illustrate
+                    that the proposed pitch adjustment module can also be effectively used with a modern
+                    pitch-controllable neural vocoder such as SiFi-GAN.
+                </p>
                 <div id="pitch-backend-samples" class="space-y-12"></div>
             </div>
 

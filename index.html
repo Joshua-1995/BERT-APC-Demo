@@ -318,6 +318,11 @@
             </h2>
 
             <div class="bg-white p-6 rounded-lg shadow-md mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center leading-tight">
+                    Comparison of Pitch Adjustment Backends:<br>
+                    Praat-Parselmouth vs. SiFi-GAN
+                </h2>
+            
                 <p class="text-lg font-medium text-gray-800 mb-4">
                     Audio examples comparing two pitch adjustment backends using the same predicted target pitch contours from BERT-APC.
                 </p>
@@ -326,31 +331,35 @@
                     Since BERT-APC explicitly produces a frame-level target F0 contour, its pitch adjustment module can be combined with different backends.
                     We implemented the pitch adjustment stage with SiFi-GAN in place of Praat-Parselmouth.
                 </p>
-                
-                <div class="mb-6">
+            
+                <div class="mt-8 mb-6">
                     <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Figure Legend</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
                         <li><span class="font-semibold text-blue-500">Blue:</span> original detuned vocal pitch before correction</li>
-                        <li><span class="font-semibold text-orange-500">Orange:</span> frame-level target pitch</li>
-                        <li><span class="font-semibold text-green-500">Green:</span> pitch of corrected singing voice of each pitch adjustment module</li>
+                        <li><span class="font-semibold text-orange-500">Orange:</span> predicted frame-level target pitch</li>
+                        <li><span class="font-semibold text-green-500">Green:</span> extracted pitch from corrected singing voice</li>
                     </ul>
                 </div>
-                
+            
                 <div class="mb-12">
                     <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Audio Sample Labels</p>
                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-8 text-gray-700">
                         <div class="flex items-center space-x-3 mb-2 sm:mb-0">
-                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
                             <div>
                                 <span class="font-semibold">Before Correction:</span>
                                 <span>Input singing voice containing pitch errors</span>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
                             <div>
                                 <span class="font-semibold">Praat-Parselmouth / SiFi-GAN:</span>
-                                <span>Pitch correction results of each model</span>
+                                <span>Pitch-corrected singing voice produced by each module</span>
                             </div>
                         </div>
                     </div>
@@ -362,9 +371,8 @@
                     Pitch Contour of Corrected Singing Voice
                 </h3>
                 <p class="max-w-3xl mx-auto text-center text-gray-700 leading-relaxed mb-8">
-                    The pitch plots show that Praat-Parselmouth follows the target contour more accurately,
-                    while both backends achieve effective pitch control overall. These examples illustrate
-                    that the proposed pitch adjustment module can also be effectively used with a modern
+                    The extracted pitch contour from the corrected singing voice follows the predicted frame-level target pitch accurately.
+                    These examples illustrate that the proposed pitch adjustment module can also be effectively used with a modern
                     pitch-controllable neural vocoder such as SiFi-GAN.
                 </p>
                 <div id="pitch-backend-samples" class="space-y-12"></div>

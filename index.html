@@ -323,15 +323,18 @@
                 </p>
                 <p class="text-gray-800 leading-relaxed">
                     We compare a TD-PSOLA-based implementation using Praat-Parselmouth with a modern pitch-controllable neural vocoder, SiFi-GAN.
-                    The first subsection focuses on the corrected pitch contours, while the second highlights audio quality and potential artifacts.
+                    Since BERT-APC explicitly produces a frame-level target F0 contour, its pitch adjustment module can be combined with different backends. 
+                    We implemented the pitch adjustment stage with SiFi-GAN in place of Praat-Parselmouth. 
+                    The pitch plots show that Praat-Parselmouth follows the target contour more accurately, while both backends achieve effective pitch control overall. 
+                    These examples illustrate that the proposed pitch adjustment module can also be effectively used with a modern pitch-controllable neural vocoder such as SiFi-GAN.
                 </p>
                 
                 <div class="mb-6">
                     <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Figure Legend</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
                         <li><span class="font-semibold text-blue-500">Blue:</span> original detuned vocal pitch before correction</li>
-                        <li><span class="font-semibold text-orange-500">Orange:</span> ground-truth (GT) note pitch (piano sound)</li>
-                        <li><span class="font-semibold text-green-500">Green:</span> correction results of each APC system</li>
+                        <li><span class="font-semibold text-orange-500">Orange:</span> frame-level target pitch</li>
+                        <li><span class="font-semibold text-green-500">Green:</span> pitch of corrected singing voice of each pitch adjustment module</li>
                     </ul>
                 </div>
                 
@@ -342,14 +345,14 @@
                             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             <div>
                                 <span class="font-semibold">Before Correction:</span>
-                                <span>Input singing voice containing pitch errors, accompanied by GT note pitches (piano sound)</span>
+                                <span>Input singing voice containing pitch errors</span>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
                             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             <div>
-                                <span class="font-semibold">BERT-APC / AutoTune Pro / Melodyne:</span>
-                                <span>Pitch correction results of each model, accompanied by GT note pitches (piano sound)</span>
+                                <span class="font-semibold">Praat-Parselmouth / SiFi-GAN:</span>
+                                <span>Pitch correction results of each model</span>
                             </div>
                         </div>
                     </div>
@@ -360,7 +363,7 @@
 
             <div class="mb-16">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-                    Pitch Contour of Corrected Singing Voice
+                    Pitch Contour of Corrected Singing Voice.
                 </h3>
                 <div id="pitch-backend-samples" class="space-y-12"></div>
             </div>

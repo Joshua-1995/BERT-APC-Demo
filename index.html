@@ -326,15 +326,15 @@
 
             <div class="bg-white p-6 rounded-lg shadow-md mb-12">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center leading-tight">
-                    Comparison of Pitch Adjustment Backends:<br>
-                    Praat-Parselmouth vs. SiFi-GAN
+                    Pitch Contour of Corrected Singing Voice using<br>
+                    Praat-Parselmouth (TD-PSOLA) and SiFi-GAN
                 </h2>
             
                 <p class="text-lg font-medium text-gray-800 mb-4">
-                    Audio examples comparing two pitch adjustment backends using the same predicted target pitch contours from BERT-APC.
+                    We visualize the predicted frame-level target pitch contour together with the pitch re-extracted from the corrected singing voice produced by each backend. 
+                    The plots show that both Praat-Parselmouth and SiFi-GAN generate corrected singing voices whose pitch closely follows the target pitch contour. 
+                    These examples illustrate that the proposed pitch adjustment module can also be effectively used with a modern pitch-controllable neural vocoder such as SiFi-GAN.
                 </p>
-                
-            
                 <div class="mt-8 mb-6">
                     <p class="text-sm font-semibold text-gray-600 uppercase mb-2">Figure Legend</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
@@ -369,17 +369,7 @@
                 </div>
             </div>
             
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
-                    Pitch Contour of Corrected Singing Voice
-                </h3>
-                <p class="max-w-3xl mx-auto text-center text-gray-700 leading-relaxed mb-8">
-                    The extracted pitch contours from the corrected singing voices show that both backends accurately follow the predicted frame-level target pitch.
-                    These examples illustrate that the proposed pitch adjustment module can also be effectively used with a modern
-                    pitch-controllable neural vocoder such as SiFi-GAN.
-                </p>
-                <div id="pitch-backend-samples" class="space-y-12"></div>
-            </div>
+
 
             <div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">

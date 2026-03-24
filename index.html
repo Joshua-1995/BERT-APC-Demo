@@ -327,9 +327,11 @@
                     Audio examples comparing two pitch adjustment backends using the same predicted target pitch contours from BERT-APC.
                 </p>
                 <p class="text-gray-800 leading-relaxed">
-                    We compare a TD-PSOLA-based implementation using Praat-Parselmouth with a modern pitch-controllable neural vocoder, SiFi-GAN.
-                    Since BERT-APC explicitly produces a frame-level target F0 contour, its pitch adjustment module can be combined with different backends.
-                    We implemented the pitch adjustment stage with SiFi-GAN in place of Praat-Parselmouth.
+                    In Stage 3, our system adopted a DSP-based pitch adjustment method, TD-PSOLA implemented in Praat-Parselmouth, to modify the pitch of the detuned singing voice. 
+                    Since BERT-APC explicitly predicts a frame-level target F0 contour, the final pitch adjustment step is not restricted to this backend and can be replaced by other modules, 
+                    such as modern pitch-controllable neural vocoders.
+
+                    To demonstrate this extensibility, we additionally present pitch-corrected audio, pitch contours, and Mel-spectrograms synthesized by SiFi-GAN, together with those produced by Praat-Parselmouth (TD-PSOLA).
                 </p>
             
                 <div class="mt-8 mb-6">
